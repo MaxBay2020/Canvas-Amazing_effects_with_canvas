@@ -1,4 +1,3 @@
-import './canvas.css'
 import {useEffect, useRef} from "react";
 
 
@@ -14,11 +13,11 @@ const Canvas = () => {
     let shrunkSpeed = 0.2
 
     let colors = [
-        '#3a86ff',
-        '#8338ec',
-        '#ff006e',
-        '#fb5607',
-        '#ffbe0b',
+        '#d90429',
+        '#ef233c',
+        '#edf2f4',
+        '#8d99ae',
+        '#2b2d42',
     ]
 
     useEffect(() => {
