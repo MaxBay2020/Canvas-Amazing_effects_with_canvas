@@ -1,5 +1,5 @@
 import './app.css'
-import Canvas from "./gravity-balls/Canvas";
+import Canvas from "./collision-detection/Canvas";
 
 const App = () => {
 
