@@ -1,5 +1,5 @@
 import './app.css'
-import Canvas from "./colorful-circles/Canvas";
+import Canvas from "./gravity-balls/Canvas";
 
 const App = () => {
 
