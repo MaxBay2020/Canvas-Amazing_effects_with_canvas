@@ -1,5 +1,5 @@
 import './app.css'
-import Canvas from "./collision-detection-circle/Canvas";
+import Canvas from "./collision-detection-rectangle/Canvas";
 
 const App = () => {
 
