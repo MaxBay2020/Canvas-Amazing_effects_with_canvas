@@ -1,5 +1,5 @@
 import './app.css'
-import Canvas from "./boilerplate/Canvas";
+import Canvas from "./circular-motion/Canvas";
 
 const App = () => {
 
