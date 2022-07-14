@@ -104,7 +104,7 @@ const Canvas = () => {
 
     const init = () => {
         circles = []
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 50; i++) {
             const radius = randomFromRange(6, 24)
             const circle = new Circle(-30,  -30, radius, i * 0.01)
             circles.push(circle)
