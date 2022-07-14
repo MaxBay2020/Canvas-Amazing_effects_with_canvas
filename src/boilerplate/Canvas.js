@@ -29,36 +29,13 @@ const Canvas = () => {
         window.addEventListener('mousemove', mouseMove)
         window.addEventListener('resize', resizeWindow)
 
-        update()
+        // update()
 
         return () => {
             window.removeEventListener('mousemove', mouseMove)
             window.removeEventListener('resize', resizeWindow)
         }
     }, [])
-
-    function Particle(x, y, radius, color){
-        this.x = x
-        this.y = y
-        this.radius = radius
-        this.color = color
-
-
-        this.draw = () =>  {
-            ctx.beginPath()
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2,false)
-
-            ctx.strokeStyle = this.color
-            ctx.stroke()
-
-        }
-
-        this.move = () => {
-
-            this.draw()
-        }
-    }
-
 
     const mouseMove = e => {
         mouse.x = e.x
@@ -80,7 +57,11 @@ const Canvas = () => {
     }
 
     const init = () => {
-
+        ctx.beginPath()
+        ctx.moveTo(0,canvas.height/2)
+        ctx.lineTo(canvas.width, canvas.height / 2)
+        ctx.strokeStyle = 'teal'
+        ctx.stroke()
     }
 
 
