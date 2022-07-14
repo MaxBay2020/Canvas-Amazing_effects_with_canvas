@@ -4,7 +4,7 @@ const Canvas = () => {
     const canvasRef = useRef(null)
     let canvas, ctx
 
-    let objects = []
+    let particles = []
     let mouse = {
         x: undefined,
         y: undefined
@@ -25,20 +25,25 @@ const Canvas = () => {
         a: 0.01
     }
 
-    function Object(x, y, radius){
-        this.x = x
-        this.y = y
-        this.radius = radius
-        this.color = colors[Math.floor(Math.random() * colors.length)]
+    class Particle{
 
-        this.draw = () =>  {
+        constructor (x, y, radius){
+            this.x = x
+            this.y = y
+            this.radius = radius
+            this.color = colors[Math.floor(Math.random() * colors.length)]
+        }
+
+
+
+        draw = () =>  {
             ctx.beginPath()
             ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2,false)
             ctx.fillStyle = this.color
             ctx.fill()
         }
 
-        this.move = () => {
+        move = () => {
             this.draw()
         }
     }
@@ -52,17 +57,14 @@ const Canvas = () => {
 
         init()
 
-        window.addEventListener('mousemove', mouseMove)
         window.addEventListener('resize', resizeWindow)
 
-        // update()
+        update()
 
         return () => {
-            window.removeEventListener('mousemove', mouseMove)
             window.removeEventListener('resize', resizeWindow)
         }
     }, [])
-
 
 
     const mouseMove = e => {
@@ -85,7 +87,9 @@ const Canvas = () => {
     }
 
     const init = () => {
-        objects = []
+        particles = []
+        const particle = new Particle(canvas.width / 2, canvas.height / 2, 20)
+        particles.push(particle)
     }
 
 
@@ -103,7 +107,7 @@ const Canvas = () => {
     const update = () => {
         requestAnimationFrame(update)
         clearAll()
-
+        particles.forEach(particle => particle.move())
     }
 
     return (
