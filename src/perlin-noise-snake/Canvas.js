@@ -1,45 +1,63 @@
 import {useEffect, useRef} from "react";
+import {noise} from '@chriscourses/perlin-noise'
 
 const Canvas = () => {
     const canvasRef = useRef(null)
     let canvas, ctx
 
-    let objects = []
+    let circles = []
+    let time = 0
+
     let mouse = {
         x: undefined,
         y: undefined
     }
 
     let colors = [
-        '#3a86ff',
-        '#8338ec',
-        '#ff006e',
-        '#fb5607',
-        '#ffbe0b',
+        '#f07167',
+        '#fed9b7',
+        '#fdfcdc',
+        '#00afb9',
+        '#0081a7',
     ]
 
     const bgColor = {
-        r: 255,
-        g: 255,
-        b: 255,
+        r: 0,
+        g: 0,
+        b: 0,
         a: 0.01
     }
 
-    function Object(x, y, radius){
-        this.x = x
-        this.y = y
-        this.radius = radius
-        this.color = colors[Math.floor(Math.random() * colors.length)]
+    let strokeColor = 'teal'
 
-        this.draw = () =>  {
+    class Circle{
+
+        constructor (x, y, radius, offset){
+            this.x = x
+            this.y = y
+            this.radius = radius
+            this.color = colors[Math.floor(Math.random() * colors.length)]
+            this.offset = offset
+        }
+
+
+
+        draw = () =>  {
             ctx.beginPath()
             ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2,false)
             ctx.fillStyle = this.color
             ctx.fill()
+            ctx.save()
+            ctx.strokeStyle = strokeColor
+            ctx.stroke()
+            ctx.restore()
         }
 
-        this.move = () => {
+        move = () => {
+            strokeColor = randomColor(colors)
             this.draw()
+            this.x = noise(time + this.offset + 20) * canvas.width
+            this.y = noise(time + this.offset) * canvas.height
         }
     }
 
@@ -55,7 +73,7 @@ const Canvas = () => {
         window.addEventListener('mousemove', mouseMove)
         window.addEventListener('resize', resizeWindow)
 
-        // update()
+        update()
 
         return () => {
             window.removeEventListener('mousemove', mouseMove)
@@ -85,7 +103,12 @@ const Canvas = () => {
     }
 
     const init = () => {
-        objects = []
+        circles = []
+        for (let i = 0; i < 100; i++) {
+            const radius = randomFromRange(6, 24)
+            const circle = new Circle(-30,  -30, radius, i * 0.01)
+            circles.push(circle)
+        }
     }
 
 
@@ -102,8 +125,10 @@ const Canvas = () => {
 
     const update = () => {
         requestAnimationFrame(update)
-        clearAll()
-
+        // clearAll()
+        clearWithOpacity()
+        circles.forEach(circle => circle.move())
+        time += 0.005
     }
 
     return (
