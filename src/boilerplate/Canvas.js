@@ -4,6 +4,7 @@ const Canvas = () => {
     const canvasRef = useRef(null)
     let canvas, ctx
 
+    let objects = []
     let mouse = {
         x: undefined,
         y: undefined
@@ -16,6 +17,31 @@ const Canvas = () => {
         '#fb5607',
         '#ffbe0b',
     ]
+
+    const bgColor = {
+        r: 255,
+        g: 255,
+        b: 255,
+        a: 0.01
+    }
+
+    function Object(x, y, radius){
+        this.x = x
+        this.y = y
+        this.radius = radius
+        this.color = colors[Math.floor(Math.random() * colors.length)]
+
+        this.draw = () =>  {
+            ctx.beginPath()
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2,false)
+            ctx.fillStyle = this.color
+            ctx.fill()
+        }
+
+        this.move = () => {
+            this.draw()
+        }
+    }
 
 
     useEffect(() => {
@@ -37,6 +63,8 @@ const Canvas = () => {
         }
     }, [])
 
+
+
     const mouseMove = e => {
         mouse.x = e.x
         mouse.y = e.y
@@ -57,11 +85,7 @@ const Canvas = () => {
     }
 
     const init = () => {
-        ctx.beginPath()
-        ctx.moveTo(0,canvas.height/2)
-        ctx.lineTo(canvas.width, canvas.height / 2)
-        ctx.strokeStyle = 'teal'
-        ctx.stroke()
+        objects = []
     }
 
 
@@ -69,6 +93,11 @@ const Canvas = () => {
         ctx.clearRect(0,0,canvas.width,canvas.height)
     }
 
+    const clearWithOpacity = () => {
+        const {r,g,b,a} = bgColor
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`
+        ctx.fillRect(0,0,canvas.width,canvas.height)
+    }
 
 
     const update = () => {
