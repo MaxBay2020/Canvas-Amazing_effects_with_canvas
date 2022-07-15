@@ -5,7 +5,17 @@ const Canvas = () => {
     let canvas, ctx
 
     let particles = []
-    const particleCount = 400
+    const particleCount = 500
+    const minRadius = 0.2
+    const maxRadius = 2
+
+    let isMouseDown = false
+
+    let radians = 0
+    let speed = 0.003
+    const shadowBlurValue = 10
+    const accelerationSpeed = 0.0001
+    const maxSpeed = 0.012
 
     let mouse = {
         x: undefined,
@@ -17,20 +27,29 @@ const Canvas = () => {
         y: undefined
     }
 
-    let colors = [
-        '#3a86ff',
-        '#8338ec',
-        '#ff006e',
-        '#fb5607',
-        '#ffbe0b',
-    ]
+    // const colors = [
+    //     '#0466c8',
+    //     '#0353a4',
+    //     '#002855',
+    //     '#001845',
+    //     '#001233',
+    //     '#33415c',
+    //     '#5c677d',
+    //     '#979dac',
+    // ]
+
+    // const colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66']
+    const colors = ['#dd1c1a', '#fff1d0', '#f0c808', '#086788', '#06aed5']
 
     const bgColor = {
-        r: 255,
-        g: 255,
-        b: 255,
-        a: 0.01
+        r: 10,
+        g: 10,
+        b: 10,
+        a: 1
     }
+
+    const alphaSpeed = 0.01
+
 
     class Particle{
 
@@ -38,14 +57,14 @@ const Canvas = () => {
             this.x = x
             this.y = y
             this.radius = radius
-            this.color = colors[Math.floor(Math.random() * colors.length)]
+            this.color = randomColor(colors)
         }
-
-
 
         draw = () =>  {
             ctx.beginPath()
             ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2,false)
+            ctx.shadowColor = this.color
+            ctx.shadowBlur = shadowBlurValue
             ctx.fillStyle = this.color
             ctx.fill()
         }
@@ -64,21 +83,26 @@ const Canvas = () => {
 
         init()
 
-        window.addEventListener('mousemove', mouseMove)
+        window.addEventListener('mousedown', mouseDown)
+        window.addEventListener('mouseup', mouseUp)
         window.addEventListener('resize', resizeWindow)
 
         update()
 
         return () => {
-            window.removeEventListener('mousemove', mouseMove)
+            window.removeEventListener('mousedown', mouseDown)
+            window.removeEventListener('mouseup', mouseUp)
             window.removeEventListener('resize', resizeWindow)
         }
     }, [])
 
 
-    const mouseMove = e => {
-        mouse.x = e.x
-        mouse.y = e.y
+    const mouseDown = () => {
+        isMouseDown = true
+    }
+
+    const mouseUp = () => {
+        isMouseDown = false
     }
 
     const resizeWindow = () => {
@@ -104,7 +128,13 @@ const Canvas = () => {
         particles = []
 
         for (let i = 0; i < particleCount; i++) {
-            const particle = new Particle(center.x, center.y, 20)
+            const longSide = canvas.width > canvas.height ? canvas.width : canvas.height
+            // const canvasWidth = canvas.width + 300
+            // const canvasHeight = canvas.height + 300
+            const x = Math.random() * longSide - longSide / 2
+            const y = Math.random() * longSide - longSide / 2
+            const radius = randomFromRange(minRadius, maxRadius)
+            const particle = new Particle(x, y, radius)
             particles.push(particle)
         }
     }
@@ -123,8 +153,27 @@ const Canvas = () => {
 
     const update = () => {
         requestAnimationFrame(update)
-        clearAll()
+        clearWithOpacity()
+
+        // 旋转画布
+        ctx.save()
+        ctx.translate(center.x, center.y)
+        ctx.rotate(radians)
         particles.forEach(particle => particle.move())
+        ctx.restore()
+
+        radians += speed
+
+        if(isMouseDown && bgColor.a >= 0.03 && speed < maxSpeed){
+            bgColor.a -= alphaSpeed
+            speed += accelerationSpeed
+            console.log(speed)
+        }else if(!isMouseDown && bgColor.a < 1 && speed > 0){
+            bgColor.a += alphaSpeed
+            speed -= accelerationSpeed
+        }
+
+
     }
 
     return (
