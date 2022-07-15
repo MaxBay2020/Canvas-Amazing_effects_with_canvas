@@ -6,6 +6,7 @@ const Canvas = () => {
 
     let particles = []
     const particleCount = 400
+    const radius = 10
 
     let mouse = {
         x: undefined,
@@ -104,7 +105,7 @@ const Canvas = () => {
         particles = []
 
         for (let i = 0; i < particleCount; i++) {
-            const particle = new Particle(center.x, center.y, 20)
+            const particle = new Particle(center.x, center.y, radius)
             particles.push(particle)
         }
     }
