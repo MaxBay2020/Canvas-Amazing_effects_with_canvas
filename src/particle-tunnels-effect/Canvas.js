@@ -5,7 +5,19 @@ const Canvas = () => {
     let canvas, ctx
 
     let particles = []
-    const particleCount = 400
+    const particleCount = 50
+    const radius = 5
+    const interval = 200
+    const timeToLive = 1000
+
+    let color = undefined
+    let hue = 0
+    let hueRadians = 0
+
+    let velocity = {
+        x: undefined,
+        y: undefined
+    }
 
     let mouse = {
         x: undefined,
@@ -26,19 +38,21 @@ const Canvas = () => {
     ]
 
     const bgColor = {
-        r: 255,
-        g: 255,
-        b: 255,
-        a: 0.01
+        r: 0,
+        g: 0,
+        b: 0,
+        a: 0.1
     }
 
     class Particle{
 
-        constructor (x, y, radius){
+        constructor (x, y, radius, velocity, color){
             this.x = x
             this.y = y
             this.radius = radius
-            this.color = colors[Math.floor(Math.random() * colors.length)]
+            this.velocity = velocity
+            this.color = color
+            this.ttl = timeToLive
         }
 
 
@@ -52,6 +66,10 @@ const Canvas = () => {
 
         move = () => {
             this.draw()
+            this.x += this.velocity.x
+            this.y += this.velocity.y
+            this.ttl--
+
         }
     }
 
@@ -102,11 +120,6 @@ const Canvas = () => {
             y: canvas.height / 2
         }
         particles = []
-
-        for (let i = 0; i < particleCount; i++) {
-            const particle = new Particle(center.x, center.y, 20)
-            particles.push(particle)
-        }
     }
 
 
@@ -120,11 +133,39 @@ const Canvas = () => {
         ctx.fillRect(0,0,canvas.width,canvas.height)
     }
 
+    const spawnRing = () => {
+        setTimeout(spawnRing, interval)
+        color = randomColor(colors)
+        hue = Math.sin(hueRadians)
+
+
+        for (let i = 0; i < particleCount; i++) {
+            const radiant = Math.PI * 2 / particleCount
+            velocity = {
+                x: Math.cos(radiant * i),
+                y: Math.sin(radiant * i)
+            }
+            const x = mouse.x
+            const y = mouse.y
+            const particle = new Particle(x, y, radius, velocity, `hsl(${Math.abs(hue * 360)}, 50%, 50%)`)
+            particles.push(particle)
+        }
+
+        hueRadians += 0.1
+    }
+
+    spawnRing()
+
 
     const update = () => {
         requestAnimationFrame(update)
-        clearAll()
-        particles.forEach(particle => particle.move())
+        clearWithOpacity()
+        particles.forEach((particle, index) => {
+            if(particle.ttl < 0)
+                particles.splice(index,1)
+            else
+                particle.move()
+        })
     }
 
     return (
