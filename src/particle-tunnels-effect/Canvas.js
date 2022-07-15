@@ -5,7 +5,14 @@ const Canvas = () => {
     let canvas, ctx
 
     let particles = []
+    const particleCount = 400
+
     let mouse = {
+        x: undefined,
+        y: undefined
+    }
+
+    let center = {
         x: undefined,
         y: undefined
     }
@@ -57,11 +64,13 @@ const Canvas = () => {
 
         init()
 
+        window.addEventListener('mousemove', mouseMove)
         window.addEventListener('resize', resizeWindow)
 
         update()
 
         return () => {
+            window.removeEventListener('mousemove', mouseMove)
             window.removeEventListener('resize', resizeWindow)
         }
     }, [])
@@ -72,6 +81,12 @@ const Canvas = () => {
         mouse.y = e.y
     }
 
+    const resizeWindow = () => {
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
+        init()
+    }
+
     const randomColor = (colors) => {
         return colors[Math.floor(Math.random() * colors.length)]
     }
@@ -80,16 +95,18 @@ const Canvas = () => {
         return Math.floor(Math.random() * (max - min + 1) + min)
     }
 
-    const resizeWindow = () => {
-        canvas.width = window.innerWidth
-        canvas.height = window.innerHeight
-        init()
-    }
 
     const init = () => {
+        center = {
+            x: canvas.width / 2,
+            y: canvas.height / 2
+        }
         particles = []
-        const particle = new Particle(canvas.width / 2, canvas.height / 2, 20)
-        particles.push(particle)
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = new Particle(center.x, center.y, 20)
+            particles.push(particle)
+        }
     }
 
 
